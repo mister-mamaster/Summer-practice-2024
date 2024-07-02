@@ -1,0 +1,1349 @@
+openapi: "3.0.2"
+info:
+  title: Bank-Info-API
+  description: OpenCode practice 2023
+  version: 0.0.3
+servers:
+  - url: http://localhost:8081/
+
+# security:
+#   - basicAuth: []
+
+paths:
+  /emessages:
+      get:
+        tags:
+          - Electronic Messages
+        description: Get all electronic messages. Default sorting ASC by id.
+        operationId: getEMessages
+        summary: getEMessages
+        parameters: 
+          - $ref: '#/components/parameters/SizeQuery'
+          - $ref: '#/components/parameters/PageQuery'
+          - $ref: '#/components/parameters/EMessageNameQuery'
+          - $ref: '#/components/parameters/DateStartQuery'
+          - $ref: '#/components/parameters/DateEndQuery'
+          - $ref: '#/components/parameters/DeletedQuery'
+        responses:
+          200:
+            $ref: '#/components/responses/EMessagesPaginate'
+        
+      post:
+        tags:
+          - Electronic Messages
+        description: Create electronic message from xml file
+        operationId: updateEMessageFromBank
+        summary: createEMessageFromBank
+        responses:
+          201:
+            $ref: '#/components/responses/201'
+  /emessages/xml:          
+      post:
+        tags:
+          - Electronic Messages
+        description: Create electronic message from xml file
+        operationId: createEMessageFromXmlFile
+        summary: createEMessageFromXmlFile
+        requestBody:
+          $ref: '#/components/requestBodies/ImportFile'
+        responses:
+          201:
+            $ref: '#/components/responses/201'
+          400:
+            $ref: '#/components/responses/InputValidationError'
+  # /emessages/{id}/xml:           
+  #     put:
+  #       tags:
+  #         - Electronic Messages
+  #       description: Update electronic message xml file
+  #       operationId: updateEMessageXmlFile
+  #       summary: updateEMessageXmlFile
+  #       parameters: 
+  #         - $ref: '#/components/parameters/EMessageIdPath'
+  #       requestBody:
+  #         $ref: '#/components/requestBodies/ImportFile'
+  #       responses:
+  #         204:
+  #           $ref: '#/components/responses/204'
+  #         400:
+  #           $ref: '#/components/responses/InputValidationError'
+  #         404:
+  #           $ref: '#/components/responses/MessageNotFoundError'
+            
+  /emessages/{id}:
+      put:
+        tags:
+          - Electronic Messages
+        description: Update electronic message name
+        operationId: updateEMessageName
+        summary: updateEMessageName
+        requestBody:
+          $ref: '#/components/requestBodies/EMessageName'
+        parameters:
+          - $ref: '#/components/parameters/EMessageIdPath'
+        responses:
+          204:
+            $ref: '#/components/responses/204'
+          400:
+            $ref: '#/components/responses/InputValidationError'
+          404:
+            $ref: '#/components/responses/MessageNotFoundError'
+            
+      delete:
+        tags:
+          - Electronic Messages
+        description: Delete electronic message
+        operationId: deleteEMessage
+        summary: deleteEMessage
+        parameters:
+          - $ref: '#/components/parameters/EMessageIdPath'
+        responses:
+          204:
+            $ref: '#/components/responses/204'
+          404:
+            $ref: '#/components/responses/MessageNotFoundError'
+      
+      patch:
+        tags:
+          - Electronic Messages
+        description: Restore electronic message
+        operationId: restoreEMessage
+        summary: restoreEMessage
+        parameters:
+          - $ref: '#/components/parameters/EMessageIdPath'
+        responses:
+          204:
+            $ref: '#/components/responses/204'
+          404:
+            $ref: '#/components/responses/MessageNotFoundError'
+            
+  /emessages/{id}/bics:
+      get:
+        tags:
+          - BIC Directory Entries
+        description: Get electronic message by ID. Default sorting ASC by id.
+        operationId: getBICDirectoryEntriesByEMessageId
+        summary: getBICDirectoryEntriesByEMessageId
+        parameters: 
+          - $ref: '#/components/parameters/EMessageIdPath'
+
+          - $ref: '#/components/parameters/SizeQuery'
+          - $ref: '#/components/parameters/PageQuery'
+          - $ref: '#/components/parameters/ParticipantTypeQuery'
+          - $ref: '#/components/parameters/NamePQuery'
+          - $ref: '#/components/parameters/BicQuery'
+
+        responses:
+          200:
+            $ref: '#/components/responses/BICDirectoryEntriesPaginate'
+          404:
+            $ref: '#/components/responses/MessageNotFoundError' 
+  
+  # /emessages/bics/{id}:        
+  #     put:
+  #       tags:
+  #         - BIC Directory Entries
+  #       description: Update bic directory entry
+  #       operationId: updateBICDirectoryEntry
+  #       summary: updateBICDirectoryEntry
+  #       requestBody:
+  #         $ref: '#/components/requestBodies/UpdateBICDirectoryEntry'
+  #       parameters:
+  #         - $ref: '#/components/parameters/BICDirectoryEntryIdPath'
+  #       responses:
+  #         204:
+  #           $ref: '#/components/responses/204'
+  #         400:
+  #           $ref: '#/components/responses/InputValidationError'
+  #         404:
+  #           $ref: '#/components/responses/BICDirectoryEntryNotFoundError'
+            
+  #     delete:
+  #       tags:
+  #         - BIC Directory Entries
+  #       description: Delete bic directory entry
+  #       operationId: deleteBICDirectoryEntry
+  #       summary: deleteBICDirectoryEntry
+  #       parameters:
+  #         - $ref: '#/components/parameters/BICDirectoryEntryIdPath'
+  #       responses:
+  #         204:
+  #           $ref: '#/components/responses/204'
+  #         404:
+  #           $ref: '#/components/responses/BICDirectoryEntryNotFoundError'
+            
+  #     patch:
+  #       tags:
+  #         - BIC Directory Entries
+  #       description: Restore bic directory entry
+  #       operationId: restoreBICDirectoryEntry
+  #       summary: restoreBICDirectoryEntry
+  #       parameters:
+  #         - $ref: '#/components/parameters/BICDirectoryEntryIdPath'
+  #       responses:
+  #         204:
+  #           $ref: '#/components/responses/204'
+  #         404:
+  #           $ref: '#/components/responses/BICDirectoryEntryNotFoundError'
+            
+  # /emessages/bics/participants:
+  #     post:
+  #       tags:
+  #         - Participants Info
+  #       description: Create participant with bic directory entry
+  #       operationId: createParticipantWithBIC
+  #       summary: createParticipantAndBIC
+  #       requestBody:
+  #         $ref: '#/components/requestBodies/CreateBICDirectoryEntry'
+  #       responses:
+  #         201:
+  #           $ref: '#/components/responses/201'
+  #         400:
+  #           $ref: '#/components/responses/InputValidationError'
+  # /emessages/bics/{id}/participants:
+  #     post:
+  #       tags:
+  #         - Participants Info
+  #       description: Create participant by bic directory entry id
+  #       operationId: createParticipantByBICDyrectoryEntryId
+  #       summary: createParticipantByBICDyrectoryEntryId
+  #       parameters:
+  #         - $ref: '#/components/parameters/BICDirectoryEntryIdPath'
+  #       requestBody:
+  #         $ref: '#/components/requestBodies/CreateParticipantInfo'
+  #       responses:
+  #         201:
+  #           $ref: '#/components/responses/201'
+  #         400:
+  #           $ref: '#/components/responses/InputValidationError'
+  #         404:
+  #           $ref: '#/components/responses/BICDirectoryEntryNotFoundError'
+  
+  # /emessages/bics/participants/{id}:
+  #     put:
+  #       tags:
+  #         - Participants Info
+  #       description: Update participant info
+  #       operationId: updateParticipantInfo
+  #       summary: updateParticipantInfo
+  #       requestBody:
+  #         $ref: '#/components/requestBodies/CreateParticipantInfo'
+  #       parameters:
+  #         - $ref: '#/components/parameters/ParticipantInfoIdPath'
+  #       responses:
+  #         204:
+  #           $ref: '#/components/responses/204'
+  #         400:
+  #           $ref: '#/components/responses/InputValidationError'
+  #         404:
+  #           $ref: '#/components/responses/ParticipantInfoNotFoundError'
+            
+  #     delete:
+  #       tags:
+  #         - Participants Info
+  #       description: Delete participant info
+  #       operationId: deleteParticipantInfo
+  #       summary: deleteParticipantInfo
+  #       parameters:
+  #         - $ref: '#/components/parameters/ParticipantInfoIdPath'
+  #       responses:
+  #         204:
+  #           $ref: '#/components/responses/204'
+  #         404:
+  #           $ref: '#/components/responses/ParticipantInfoNotFoundError'
+            
+  #     patch:
+  #       tags:
+  #         - Participants Info
+  #       description: Restore participant info
+  #       operationId: restoreParticipantInfo
+  #       summary: restoreParticipantInfo
+  #       parameters:
+  #         - $ref: '#/components/parameters/ParticipantInfoIdPath'
+  #       responses:
+  #         204:
+  #           $ref: '#/components/responses/204'
+  #         404:
+  #           $ref: '#/components/responses/ParticipantInfoNotFoundError'
+            
+  # /emessages/bics/{id}/accounts:
+  #     post:
+  #       tags:
+  #         - Accounts
+  #       description: Create account by bic directory entry id
+  #       operationId: createAccountByBICDyrectoryEntryId
+  #       summary: createAccountByBICDyrectoryEntryId
+  #       parameters:
+  #         - $ref: '#/components/parameters/BICDirectoryEntryIdPath'
+  #       requestBody:
+  #         $ref: '#/components/requestBodies/CreateAccount'
+  #       responses:
+  #         201:
+  #           $ref: '#/components/responses/201'
+  #         400:
+  #           $ref: '#/components/responses/InputValidationError'
+  #         404:
+  #           $ref: '#/components/responses/AccountNotFoundError'
+  
+  # /emessages/bics/accounts/{id}:
+  #     put:
+  #       tags:
+  #         - Accounts
+  #       description: Update account
+  #       operationId: updateAccount
+  #       summary: updateAccount
+  #       requestBody:
+  #         $ref: '#/components/requestBodies/CreateAccount'
+  #       parameters:
+  #         - $ref: '#/components/parameters/AccountIdPath'
+  #       responses:
+  #         204:
+  #           $ref: '#/components/responses/204'
+  #         400:
+  #           $ref: '#/components/responses/InputValidationError'
+  #         404:
+  #           $ref: '#/components/responses/AccountNotFoundError'
+            
+  #     delete:
+  #       tags:
+  #         - Accounts
+  #       description: Delete account
+  #       operationId: deleteAccount
+  #       summary: deleteAccount
+  #       parameters:
+  #         - $ref: '#/components/parameters/AccountIdPath'
+  #       responses:
+  #         204:
+  #           $ref: '#/components/responses/204'
+  #         404:
+  #           $ref: '#/components/responses/AccountNotFoundError'
+            
+  #     patch:
+  #       tags:
+  #         - Accounts
+  #       description: Restore account
+  #       operationId: restoreAccount
+  #       summary: restoreAccount
+  #       parameters:
+  #         - $ref: '#/components/parameters/AccountIdPath'
+  #       responses:
+  #         204:
+  #           $ref: '#/components/responses/204'
+  #         404:
+  #           $ref: '#/components/responses/AccountNotFoundError'
+            
+  
+  # /emessages/bics/{id}/swbics:
+  #     post:
+  #       tags:
+  #         - SWBICS
+  #       description: Create SWBIC by bic directory entry id
+  #       operationId: createSWBICByBICDyrectoryEntryId
+  #       summary: createSWBICByBICDyrectoryEntryId
+  #       parameters:
+  #         - $ref: '#/components/parameters/BICDirectoryEntryIdPath'
+  #       requestBody:
+  #         $ref: '#/components/requestBodies/CreateSWBIC'
+  #       responses:
+  #         201:
+  #           $ref: '#/components/responses/201'
+  #         400:
+  #           $ref: '#/components/responses/InputValidationError'
+  #         404:
+  #           $ref: '#/components/responses/SWBICNotFoundError'
+  
+  # /emessages/bics/swbics/{id}:
+  #     put:
+  #       tags:
+  #         - SWBICS
+  #       description: Update SWBIC
+  #       operationId: updateSWBIC
+  #       summary: updateSWBIC
+  #       requestBody:
+  #         $ref: '#/components/requestBodies/CreateSWBIC'
+  #       parameters:
+  #         - $ref: '#/components/parameters/SWBICIdPath'
+  #       responses:
+  #         204:
+  #           $ref: '#/components/responses/204'
+  #         400:
+  #           $ref: '#/components/responses/InputValidationError'
+  #         404:
+  #           $ref: '#/components/responses/SWBICNotFoundError'
+            
+  #     delete:
+  #       tags:
+  #         - SWBICS
+  #       description: Delete SWBIC
+  #       operationId: deleteSWBIC
+  #       summary: deleteSWBIC
+  #       parameters:
+  #         - $ref: '#/components/parameters/SWBICIdPath'
+  #       responses:
+  #         204:
+  #           $ref: '#/components/responses/204'
+  #         404:
+  #           $ref: '#/components/responses/SWBICNotFoundError'
+            
+  #     patch:
+  #       tags:
+  #         - SWBICS
+  #       description: Restore SWBIC
+  #       operationId: restoreSWBIC
+  #       summary: restoreSWBIC
+  #       parameters:
+  #         - $ref: '#/components/parameters/SWBICIdPath'
+  #       responses:
+  #         204:
+  #           $ref: '#/components/responses/204'
+  #         404:
+  #           $ref: '#/components/responses/SWBICNotFoundError' 
+  
+            
+  /info:
+      get:
+        tags:
+          - Bank Info
+        description: Get all bank info. Default sorting ASC by id.
+        operationId: getAllInfo
+        summary: getAllInfo
+        parameters: 
+          - $ref: '#/components/parameters/SizeQuery'
+          - $ref: '#/components/parameters/PageQuery'
+          - $ref: '#/components/parameters/InfoNameQuery'
+          - $ref: '#/components/parameters/DeletedQuery'
+        responses:
+          200:
+            $ref: '#/components/responses/InfoPaginate'
+            
+      post:
+        tags:
+          - Bank Info
+        description: Create bank info
+        operationId: createInfo
+        summary: createInfo
+        requestBody:
+          $ref: '#/components/requestBodies/CreateInfo'
+        responses:
+          201:
+            $ref: '#/components/responses/201'
+          400:
+            $ref: '#/components/responses/InputValidationError'
+  
+  /info/{id}:
+      put:
+        tags:
+          - Bank Info
+        description: Update bank info by id
+        operationId: updateInfoById
+        summary: updateInfoById
+        parameters:
+          - $ref: '#/components/parameters/InfoIdPath'
+        requestBody:
+          $ref: '#/components/requestBodies/CreateInfo'
+        responses:
+          204:
+            $ref: '#/components/responses/204'
+          400:
+            $ref: '#/components/responses/InputValidationError'
+          404:
+            $ref: '#/components/responses/InfoNotFoundError'
+      
+      delete:
+        tags:
+          - Bank Info
+        description: Delete bank info by id
+        operationId: deleteInfoById
+        summary: deleteInfoById
+        parameters:
+          - $ref: '#/components/parameters/InfoIdPath'
+        responses:
+          204:
+            $ref: '#/components/responses/204'
+          404:
+            $ref: '#/components/responses/InfoNotFoundError'
+            
+      patch:
+        tags:
+          - Bank Info
+        description: Restore bank info by id
+        operationId: restoreInfoById
+        summary: restoreInfoById
+        parameters:
+          - $ref: '#/components/parameters/InfoIdPath'
+        responses:
+          204:
+            $ref: '#/components/responses/204'
+          404:
+            $ref: '#/components/responses/InfoNotFoundError'
+            
+      
+
+  /info/{id}/manuals:
+      get:
+        tags:
+          - Manuals
+        description: Get manuals by bank info id. Default sorting ASC by id.
+        operationId: getManualsByInfoId
+        summary: getManualsByInfoId
+        parameters: 
+          - $ref: '#/components/parameters/InfoIdPath'
+          - $ref: '#/components/parameters/SizeQuery'
+          - $ref: '#/components/parameters/PageQuery'
+          - $ref: '#/components/parameters/ManualCodeQuery'
+          - $ref: '#/components/parameters/ManualDescriptionQuery'
+          - $ref: '#/components/parameters/DeletedQuery'
+        responses:
+          200:
+            $ref: '#/components/responses/ManualPaginate'
+          404:
+            $ref: '#/components/responses/InfoNotFoundError'
+            
+      post:
+        tags:
+          - Manuals
+        description: Add manual record(row) by info id
+        operationId: addManual
+        summary: addManual
+        parameters: 
+          - $ref: '#/components/parameters/InfoIdPath'
+        requestBody:
+          $ref: '#/components/requestBodies/CreateManual'
+        responses:
+          201:
+            $ref: '#/components/responses/201'
+          400:
+            $ref: '#/components/responses/InputValidationError'
+          404:
+            $ref: '#/components/responses/InfoNotFoundError'
+  
+  /info/manuals/{id}:
+      put:
+        tags:
+          - Manuals
+        description: Update manual by id
+        operationId: updateManualById
+        summary: updateManualById
+        parameters:
+          - $ref: '#/components/parameters/ManualIdPath'
+        requestBody:
+          $ref: '#/components/requestBodies/CreateManual'
+        responses:
+          204:
+            $ref: '#/components/responses/204'
+          400:
+            $ref: '#/components/responses/InputValidationError'
+          404:
+            $ref: '#/components/responses/ManualNotFoundError'
+      
+      delete:
+        tags:
+          - Manuals
+        description: Delete manual by id
+        operationId: deleteManualById
+        summary: deleteManualById
+        parameters:
+          - $ref: '#/components/parameters/ManualIdPath'
+        responses:
+          204:
+            $ref: '#/components/responses/204'
+          404:
+            $ref: '#/components/responses/ManualNotFoundError'
+            
+      patch:
+        tags:
+          - Manuals
+        description: Restore manual by id
+        operationId: restoreManualById
+        summary: restoreManualById
+        parameters:
+          - $ref: '#/components/parameters/ManualIdPath'
+        responses:
+          204:
+            $ref: '#/components/responses/204'
+          404:
+            $ref: '#/components/responses/ManualNotFoundError'
+  
+
+components:
+
+  # securitySchemes:
+  #   basicAuth:     
+  #     type: http
+  #     scheme: basic
+
+  parameters:
+    SizeQuery:
+      name: size
+      in: query
+      description: Count of items in one page
+      required: true
+      schema:
+        type: integer
+        default: 10
+        
+    PageQuery:
+      name: page
+      in: query
+      description: Number of page items
+      required: true
+      schema:
+        type: integer
+        default: 1
+        
+    EMessageNameQuery:
+      name: emessage_name
+      in: query
+      description: Filter by electronic message name
+      required: false
+      schema:
+        type: string
+        
+    BicQuery:
+      name: bic
+      in: query
+      description: Filter by BIC
+      required: false
+      schema:
+        type: string
+        
+    ParticipantTypeQuery:
+      name: participant_type
+      in: query
+      description: Filter by participant type
+      required: false
+      schema:
+        type: integer
+        
+    NamePQuery:
+      name: name_p
+      in: query
+      description: Filter by participant name
+      required: false
+      schema:
+        type: string
+        
+    DateStartQuery:
+      name: date_start
+      in: query
+      description: Filter by date start
+      required: false
+      schema:
+        type: string
+        format: date
+        default: 0
+        
+    DateEndQuery:
+      name: date_end
+      in: query
+      description: Filter by date end
+      required: false
+      schema:
+        type: string 
+        format: date
+        default: 0
+        
+    EMessageIdPath:
+      name: id
+      in: path
+      description: Electronic message id
+      required: true
+      schema:
+        type: integer
+        
+    BICDirectoryEntryIdPath:
+      name: id
+      in: path
+      description: BIC directory entry id
+      required: true
+      schema:
+        type: integer
+        
+    ParticipantInfoIdPath:
+      name: id
+      in: path
+      description: Participant info id
+      required: true
+      schema:
+        type: integer
+        
+    AccountIdPath:
+      name: id
+      in: path
+      description: Account id
+      required: true
+      schema:
+        type: integer
+        
+    SWBICIdPath:
+      name: id
+      in: path
+      description: SWBIC id
+      required: true
+      schema:
+        type: integer
+        
+    InfoNameQuery:
+      name: name
+      in: query
+      description: Filter by bank info name
+      required: false
+      schema:
+        type: string
+        
+    ManualCodeQuery:
+      name: code
+      in: query
+      description: Filter by bank info code
+      required: false
+      schema:
+        type: string
+        
+    ManualDescriptionQuery:
+      name: description
+      in: query
+      description: Filter by bank info description
+      required: false
+      schema:
+        type: string
+        
+    DeletedQuery:
+      name: deleted
+      in: query
+      description: If this filter true - search area include deleted items
+      required: false
+      schema:
+        type: boolean
+        default: false
+        
+    InfoIdPath:
+      name: id
+      in: path
+      description: Bank info id
+      required: true
+      schema:
+        type: integer
+        
+    ManualIdPath:
+      name: id
+      in: path
+      description: Manual id
+      required: true
+      schema:
+        type: integer
+
+  requestBodies:
+    ImportFile:
+      description: Import file
+      required: true
+      content:
+        multipart/form-data:
+          schema:
+            type: object
+            format: binary
+
+    CreateManual:
+      description: Manual info
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CreateManual'
+            
+    CreateInfo:
+      description: Bank info
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CreateInfo'
+            
+    EMessageName:
+      description: Electronic message name
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/EMessageName'
+            
+    CreateBICDirectoryEntry:
+      description: Create BIC directory entry
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CreateBICDirectoryEntry'
+            
+    CreateParticipantInfo:
+      description: Create participant
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CreateParticipantInfo'
+            
+    CreateAccount:
+      description: Create account
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CreateAccount'
+            
+    CreateSWBIC:
+      description: Create account
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CreateSWBIC'
+    
+    UpdateBICDirectoryEntry:
+      description: Update BIC directory entry
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UpdateBICDirectoryEntry'
+
+  responses:
+    
+    ManualPaginate:
+      description: All Bank Info
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ManualPaginate"
+  
+    InfoPaginate:
+      description: All Bank Info
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/InfoPaginate"
+            
+  
+    BICDirectoryEntriesPaginate:
+      description: BICDirectoryEntries
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/BICDirectoryEntriesPaginate"
+    
+    EMessagesPaginate:
+      description: Message
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/EMessagesPaginate"
+    
+    BICDirectoryEntryNotFoundError:
+      description: BIC Directory Entry not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+            
+    ParticipantInfoNotFoundError:
+      description: Participant info not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+            
+    AccountNotFoundError:
+      description: Account not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+            
+    SWBICNotFoundError:
+      description: SWBIC not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    
+    MessageNotFoundError:
+      description: Message not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+            
+    InfoNotFoundError:
+      description: Bank info not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+            
+    ManualNotFoundError:
+      description: Manual not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+          
+    InputValidationError:
+      description: Invalid input parameters
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+            
+    201:
+      description: Created
+      
+    204:
+      description: No content
+    
+  schemas:
+  
+    
+    EMessageName:
+      type: object
+      properties:
+        eMessageName:
+          type: string
+      example:
+        name: имя файла
+    
+    EMessageHeader:
+      type: object
+      properties:
+        eMessageName:
+          type: string
+        edNo:
+          type: integer
+        edDate:
+          type: string
+          format: date
+        edAuthor:
+          type: integer
+        edReceiver:
+          type: string
+        creationReason:
+          type: string
+        creationTime:
+          type: string
+          format: date-time
+        infoTypeCode:
+          type: string
+        businessDay:
+          type: string
+          format: date
+      example:
+        eMessageName: ED807
+        edNo: 1
+        edDate: 2023-05-17
+        edAuthor: 4583001999
+        creationReason: FCBD
+        creationDateTime: '2023-05-17T18:31:47Z'
+        infoTypeCode: FIRR
+        businessDay: 2022-07-05
+    
+    AuditFields:
+      type: object
+      properties:
+        isDeleted:
+          type: boolean
+        # createdBy:
+        #   type: integer
+        createDateTime:
+          type: string
+          format: date-time
+        # changedBy:
+        #   type: integer
+        changeDateTime:
+          type: string
+          format: date-time
+      
+      
+    EMessage:
+      type: object
+      properties:
+        id:
+          type: integer
+      allOf:
+        - $ref: '#/components/schemas/EMessageHeader'
+        - $ref: '#/components/schemas/AuditFields'
+      example:
+        id: 0
+        eMessageName: ED807
+        edNo: 1
+        edDate: 2023-05-17
+        edAuthor: 4583001999
+        creationReason: FCBD
+        creationDateTime: '2023-05-17T18:31:47Z'
+        infoTypeCode: FIRR
+        businessDay: 2022-07-05
+        isDeleted: false
+        createDateTime: '2023-05-18T14:52:05Z'
+        changeDateTime: '2023-05-18T14:53:05Z'
+    
+    EMessages:
+      type: array
+      items:
+        $ref: "#/components/schemas/EMessage"   
+        
+    EMessagesPaginate:
+      type: object
+      properties:
+        items:
+          $ref: '#/components/schemas/EMessages'
+        config:
+          $ref: '#/components/schemas/ConfigPagination'   
+    
+    CreateParticipantInfo:
+      type: object
+      properties:
+        nameP:
+          type: string
+        regN:
+          type: string
+        cntrCd:
+          type: string
+        rgn:
+          type: integer
+        ind:
+          type: integer
+        tnp:
+          type: string
+        nnp:
+          type: string
+        adr:
+          type: string
+        prntBIC:
+          type: string
+        dateIn:
+          type: string
+          format: date
+        dateOut: 
+          type: string
+          format: date
+        ptType:
+          type: integer
+        srvcs:
+          type: integer
+        xchType:
+          type: integer
+        uid:
+          type: string
+        participantStatus:
+          type: string
+        rstrList:
+          type: array
+          items:
+            $ref: '#/components/schemas/rstr'
+      example:
+        nameP: УРАЛЬСКИЙ ФИЛИАЛ АО РАЙФФАЙЗЕНБАНК
+        regN: 3292/2
+        cntrCd: RU
+        rgn: 65
+        ind: 620075
+        tnp: г
+        nnp: Екатеринбург
+        adr: ул Красноармейская, 10
+        prntBIC: 044525700
+        dateIn: 2005-03-03
+        dateOut: 
+        ptType: 30
+        srvcs: 3
+        xchType: 1
+        uid: 6577906000
+        participantStatus: PSAC
+        rstrList:
+          - rstr: temp
+            rstrDate: 2005-03-03
+    
+    rstr:
+      type: object
+      properties:
+        rstr:
+          type: string
+        rstrDate:
+          type: string
+          format: date
+    
+    ParticipantInfo:
+      type: object
+      properties:
+        idP:
+          type: integer
+      allOf:
+        - $ref: '#/components/schemas/CreateParticipantInfo'
+        - $ref: '#/components/schemas/AuditFields'
+      example:
+        idP: 0
+        nameP: УРАЛЬСКИЙ ФИЛИАЛ АО РАЙФФАЙЗЕНБАНК
+        regN: 3292/2
+        cntrCd: RU
+        rgn: 65
+        ind: 620075
+        tnp: г
+        nnp: Екатеринбург
+        adr: ул Красноармейская, 10
+        prntBIC: 044525700
+        dateIn: 2005-03-03
+        dateOut: 
+        ptType: 30
+        srvcs: 3
+        xchType: 1
+        uid: 6577906000
+        participantStatus: PSAC
+        rstrList:
+          - rstr: temp
+            rstrDate: 2005-03-03
+        isDeleted: false
+        createDateTime: '2023-05-18T14:52:05Z'
+        changeDateTime: '2023-05-18T14:53:05Z'
+        
+    CreateSWBIC:
+      type: object
+      properties:
+        swBIC:
+          type: string
+        defaultSWBIC:
+          type: boolean
+      example: 
+        swBIC: swBIC
+        defaultSWBIC: false
+        
+    SWBIC:
+      type: object
+      properties:
+        id:
+          type: integer
+      allOf:
+        - $ref: '#/components/schemas/CreateSWBIC'
+        - $ref: '#/components/schemas/AuditFields'
+      example:
+        id: 0
+        swBIC: swBIC
+        defaultSWBIC: false
+        isDeleted: false
+        createDateTime: '2023-05-18T14:52:05Z'
+        changeDateTime: '2023-05-18T14:53:05Z'
+        
+    SWBICS:
+      type: array
+      items:
+        $ref: "#/components/schemas/SWBIC"
+    
+    UpdateBICDirectoryEntry:
+      type: object
+      properties:
+        bic:
+          type: string
+
+    CreateBICDirectoryEntry:
+      type: object
+      properties:
+        bic:
+          type: string
+        participantInfo:
+          $ref: '#/components/schemas/ParticipantInfo'
+        
+    BICDirectoryEntry:
+      type: object
+      properties:
+        id:
+          type: integer
+        bic:
+          type: string
+        changeType:
+          type: string
+        participantInfo:
+          $ref: '#/components/schemas/ParticipantInfo'
+        accounts:
+          $ref: '#/components/schemas/Accounts'
+        swbics:
+          $ref: '#/components/schemas/SWBICS'
+      
+    BICDirectoryEntries:
+      type: array
+      items:
+        $ref: '#/components/schemas/BICDirectoryEntry'
+      
+    BICDirectoryEntriesPaginate:
+      type: object
+      properties:
+        items:
+          $ref: '#/components/schemas/BICDirectoryEntries'
+        config:
+          $ref: '#/components/schemas/ConfigPagination'
+      
+    CreateAccount:
+      type: object
+      properties:
+        account:
+          type: string
+        regulationAccountType:
+          type: string
+        controlKey:
+          type: integer
+        accountCBRBIC:
+          type: string
+        dateIn:
+          type: string
+          format: date
+        dateOut:
+          type: string
+          format: date
+        accountStatus:
+          type: string
+        accRstrList:
+          type: array
+          items:
+            $ref: '#/components/schemas/AccRstr'
+      example:
+        account: 40116810100000010010
+        regulationAccountType: TRSA
+        controlKey: 99
+        accountCBRBIC: 041280002
+        dateIn: 2013-01-09
+        dateOut:
+        accountStatus: ACAC
+        accRstrList:
+          - accRstr: temp
+            accRstrDate: 2013-01-09
+            successorBIC: 0
+   
+    AccRstr:
+      type: object
+      properties:
+        accRstr:
+          type: string
+        accRstrDate:
+          type: string
+          format: date
+        successorBIC:
+          type: integer
+          
+    Account:
+      type: object
+      properties:
+        id:
+          type: integer
+      allOf:
+        - $ref: '#/components/schemas/CreateAccount'
+        - $ref: '#/components/schemas/AuditFields'
+      example:
+        id: 0
+        account: 40116810100000010010
+        regulationAccountType: TRSA
+        controlKey: 99
+        accountCBRBIC: 041280002
+        dateIn: 2013-01-09
+        dateOut:
+        accountStatus: ACAC
+        accRstrList:
+          - accRstr: temp
+            accRstrDate: 2013-01-09
+            successorBIC: 0
+        isDeleted: false
+        createDateTime: '2023-05-18T14:52:05Z'
+        changeDateTime: '2023-05-18T14:53:05Z'
+      
+    Accounts:
+      type: array
+      items:
+        $ref: '#/components/schemas/Account'
+    
+    CreateManual:
+      type: object
+      properties:
+        code:
+          type: string
+        description:
+          type: string
+      example:
+        code: RQST
+        description: Ответ на ЭС-запрос участника
+     
+    Manual:
+      type: object
+      properties:
+        id:
+          type: integer
+      allOf:
+        - $ref: '#/components/schemas/CreateManual'
+        - $ref: '#/components/schemas/AuditFields'
+      example:
+        id: 0
+        code: RQST
+        description: Ответ на ЭС-запрос участника
+        isDeleted: false
+        createDateTime: 2023-05-17T18:31:47Z
+        changeDateTime: 2023-05-17T18:31:47Z
+        
+    Manuals:
+      type: array
+      items:
+        $ref: '#/components/schemas/Manual'
+        
+    CreateInfo:
+      type: object
+      properties:
+        name:
+          type: string
+      example:
+        name: Причина создания ЭС
+        
+    Info:
+      type: object
+      properties:
+        id:
+          type: integer
+      allOf:
+        - $ref: '#/components/schemas/CreateInfo'
+        - $ref: '#/components/schemas/AuditFields'
+      example:
+        id: 0
+        name: Причина создания ЭС
+        isDeleted: false
+        createDateTime: 0
+        changeDateTime: 0
+        
+    ConfigPagination:
+      type: object
+      properties:
+        countOfPages:
+          type: integer
+        countOfItems:
+          type: integer
+      example:
+        countOfPages: 5
+        countOfItems: 50
+    
+    InfoPaginate:
+      type: object
+      properties:
+        items:
+          $ref: '#/components/schemas/InfoArray'
+        config:
+          $ref: '#/components/schemas/ConfigPagination'
+          
+    ManualPaginate:
+      type: object
+      properties:
+        items:
+          $ref: '#/components/schemas/Manuals'
+        config:
+          $ref: '#/components/schemas/ConfigPagination'
+        
+    InfoArray:
+      type: array
+      items:
+        $ref: '#/components/schemas/Info'
+        
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+          nullable: false
+      example:
+        message: error.message

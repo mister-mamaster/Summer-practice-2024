@@ -1,0 +1,18 @@
+version: '3'
+
+services:
+  client:
+    image: 'robingoood/open-code-frontend:2.0'
+    container_name: 'client-frontend'
+    ports:
+      - '3000:3000'
+    volumes:
+      - /app
+      - /app/node_modules
+    stdin_open: true
+    tty: true
+  service:
+    image: 'robingoood/open-code-backend:2.0'
+    container_name: 'service-backend'
+    ports:
+      - '8090:8090'
