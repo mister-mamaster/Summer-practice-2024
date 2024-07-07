@@ -4,7 +4,7 @@ info:
   description: OpenCode practice 2023
   version: 0.0.3
 servers:
-  - url: http://localhost:8081/
+  - url: http://localhost:8090/
 
 # security:
 #   - basicAuth: []
