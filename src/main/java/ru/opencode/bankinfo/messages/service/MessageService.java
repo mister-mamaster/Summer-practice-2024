@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
@@ -35,11 +36,9 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
+@Transactional
 @Service
 public class MessageService {
 
@@ -81,14 +80,11 @@ public class MessageService {
         return eMessagePageWithPaginateConfig;
     }
 
-
+    @Transactional
     public EMessageEntity createMessage(MessageDTO dto) {
         try {
-
             EMessageEntity message = mapper.DTOToMessage(dto);
-            messageRepo.save(message);
             List<Entry> entries = createEntriesForMessage(dto, message);
-            entryRepo.saveAll(entries);
 
             List<Account> accounts = new ArrayList<>();
             List<SWBIC> swbics = new ArrayList<>();
@@ -112,13 +108,13 @@ public class MessageService {
                     rstrs.addAll(entry.getParticipantInfo().getRstrList());
                 }
             }
+            fillMessage(entries, message);
+            messageRepo.save(message);
+            entryRepo.saveAll(entries);
             accountRepo.saveAll(accounts);
             swbicsRepo.saveAll(swbics);
             rstrRepo.saveAll(rstrs);
             accRstrRepo.saveAll(accRstrs);
-
-            fillMessage(entries, message);
-            messageRepo.save(message);
             return message;
         } catch (RuntimeException e) {
             System.out.println(e);
@@ -207,12 +203,12 @@ public class MessageService {
         Set<EntryDTO> entriesDTO = dto.getEntries();
         List<Entry> entries = new LinkedList<>();
 
-        entriesDTO.stream().map(d -> mapper.DTOToEntry(d, message.getId())).forEach(entries::add);
+        entriesDTO.stream().map(d -> mapper.DTOToEntry(d, message)).forEach(entries::add);
 
             return entries;
     }
 
     private void fillMessage(List<Entry> entries, EMessageEntity message) {
-        message.setEntriesId(entries.stream().map(Entry::getId).toList());
+        message.setEntries(entries);
     }
 }
