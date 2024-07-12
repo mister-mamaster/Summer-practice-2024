@@ -1,15 +1,41 @@
 openapi: "3.0.2"
 info:
   title: Bank-Info-API
-  description: OpenCode practice 2023
-  version: 0.0.3
+  description: OpenCode practice 2024
+  version: 0.0.4
 servers:
   - url: http://localhost:8090/
 
-# security:
-#   - basicAuth: []
-
 paths:
+  /login:
+    post:
+      tags:
+        - Registration
+      description: Used for authorization
+      parameters:
+        - name: login
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: password
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: successfully
+          content:
+            text:
+              schema:
+                oneOf:
+                  - type: string
+                    example: "Добро пожаловать!"
+                  - type: string
+                    example: "*HTML page with authorization form*"
+
+
   /emessages:
       get:
         tags:
