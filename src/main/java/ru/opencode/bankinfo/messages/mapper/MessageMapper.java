@@ -1,5 +1,7 @@
 package ru.opencode.bankinfo.messages.mapper;
 
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import ru.opencode.bankinfo.messages.dto.MessageDTO;
 import ru.opencode.bankinfo.messages.dto.subDTO.*;
 import ru.opencode.bankinfo.messages.entity.*;
@@ -20,9 +22,9 @@ public class MessageMapper {
         return message;
     };
 
-    public Entry DTOToEntry(EntryDTO dto, Long messageId){
+    public Entry DTOToEntry(EntryDTO dto, EMessageEntity message){
         Entry entry = new Entry(
-                messageId,
+                message,
                 dto.getBIC(),
                 DTOToParticipant(dto.getParticipantInfoDTO()));
 

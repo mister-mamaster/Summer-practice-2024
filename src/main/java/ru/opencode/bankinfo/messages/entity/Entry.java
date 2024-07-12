@@ -26,8 +26,9 @@ public class Entry extends Audit {
 
     @NonNull
     @NotNull
-    @Column(nullable = false)
-    private Long messageId;
+    @ManyToOne
+    @JoinColumn(name = "message_id", nullable = false)
+    private EMessageEntity message;
 
     @NonNull
     @NotNull

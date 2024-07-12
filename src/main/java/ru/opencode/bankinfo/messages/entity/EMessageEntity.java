@@ -26,11 +26,14 @@ public class EMessageEntity extends Audit {
     @EqualsAndHashCode.Include
     @Setter(AccessLevel.PRIVATE)
     private Long id;
+
     @NotNull
     @NotBlank
     private String eMessageName;
+
     @JsonIgnore
-    private List<Long> entriesId;
+    @OneToMany(mappedBy = "message", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    private List<Entry> entries;
 
     @NonNull
     @NotNull
